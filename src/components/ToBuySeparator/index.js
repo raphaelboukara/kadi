@@ -9,8 +9,8 @@ const ToBuySeparator = () => (
 const styles = StyleSheet.create({
     separator: {
         borderBottomColor: style.color.border,
-        borderBottomWidth: 2,
-        marginHorizontal: 5
+        borderBottomWidth: 1,
+        marginHorizontal: 15
     }
 });
 

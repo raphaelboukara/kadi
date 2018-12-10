@@ -4,6 +4,7 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import reducers from './reducers';
 import ToBuys from './components/ToBuys';
+import ToBuyInput from './components/ToBuyInput';
 import style from './style.json';
 
 const store = createStore(
@@ -34,6 +35,7 @@ const App = () => (
 	<Provider store={store}>
 		<View style={styles.container}>
 			<ToBuys/>
+			<ToBuyInput/>
 		</View>
 	</Provider>
 );

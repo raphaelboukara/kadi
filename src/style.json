@@ -1,12 +1,8 @@
 {
     "color": {
-        "background": "#002451",
-        "foreground": "#ffffff",
-        "highlightBackground": "#00346e",
-        "selectionBackground": "#003f8e",
-        "border": "#404f7d",
-        "title": "#bbdaff",
-        "text": "#ffffff"
+        "background": "#bbdaff",
+        "border": "#002451",
+        "text": "#002451"
     },
     "font": {
         "size": {
