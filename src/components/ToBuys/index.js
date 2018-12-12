@@ -6,21 +6,6 @@ import * as Selectors from './../../selectors';
 import ToBuy from './../ToBuy';
 import ToBuySeparator from './../ToBuySeparator';
 
-// fetch('https://rallycoding.herokuapp.com/api/music_albums')
-//             .then((response) => {
-//                 if (response.ok) {
-//                     return response.json();
-//                 }
-
-//                 return {};
-//             })
-//             .then((data) => {
-//                 // this.setState({ data });
-//             })
-//             .catch((error) => {
-//                 console.error(error);
-//             });
-
 const ToBuys = ({ data }) => {
     // eslint-disable-next-line react/prop-types
     const renderItem = ({ item }) => (
