@@ -1,29 +1,13 @@
-import { createStore } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import reducers from './../reducers';
+import firebase from './../middlewares/firebase';
 
 export default () => {
+    const composeEnhancers =        window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
     const store = createStore(
         reducers,
-        {
-            toBuys: {
-                'ABC': {
-                    id: 'ABC',
-                    text: 'couche culotte princesse keren'
-                },
-                'DEF': {
-                    id: 'DEF',
-                    text: 'shampoing et gel douche homme'
-                },
-                'GHI': {
-                    id: 'GHI',
-                    text: 'sucre'
-                },
-                'JKL': {
-                    id: 'JKL',
-                    text: 'pommes, fraises, poires'
-                }
-            }
-        }
+        composeEnhancers(applyMiddleware(firebase))
     );
 
     return store;

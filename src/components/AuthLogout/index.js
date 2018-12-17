@@ -1,29 +1,27 @@
 import React, { Component } from 'react';
-import firebase from 'firebase';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
 import { Card, CardSection, Button } from './../lib';
 
-class AuthLogout extends Component {
-    constructor(props) {
-        super(props);
+import * as AuthActions from './../../actions/auth';
 
-        this.handlePress = this.handlePress.bind(this);
-    }
+const AuthLogout = ({ unsetAuth }) => (
+    <Card>
+        <CardSection>
+            <Button onPress={unsetAuth}>
+                Log out
+            </Button>
+        </CardSection>
+    </Card>
+);
 
-    handlePress() {
-        firebase.auth().signOut();
-    }
+AuthLogout.propTypes = {
+    unsetAuth: PropTypes.func.isRequired
+};
 
-    render() {
-        return (
-            <Card>
-                <CardSection>
-                    <Button onPress={this.handlePress}>
-                        Log out
-                    </Button>
-                </CardSection>
-            </Card>
-        );
-    }
-}
+const mapDispatchToProps = ({
+    unsetAuth: AuthActions.unsetAuth
+});
 
-export default AuthLogout;
+export default connect(null, mapDispatchToProps)(AuthLogout);

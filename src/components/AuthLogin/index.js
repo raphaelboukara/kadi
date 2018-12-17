@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
-import firebase from 'firebase';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
 import { Card, CardSection, Button, Input, Spinner } from './../lib';
+
+import * as AuthActions from './../../actions/auth';
+import * as AuthSelectors from './../../selectors/auth';
 
 class AuthLogin extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            email: '',
-            password: '',
-            error: '',
+            error: false,
             loading: false
         };
 
@@ -17,50 +20,34 @@ class AuthLogin extends Component {
         this.handleChangePassword = this.handleChangePassword.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
 
-        this.onLoginSuccess = this.onLoginSuccess.bind(this);
-        this.onLoginError = this.onLoginError.bind(this);
+        this.onError = this.onError.bind(this);
     }
 
     handleChangeEmail(email) {
-        this.setState({ email });
+        this.props.setEmail(email);
     }
 
     handleChangePassword(password) {
-        this.setState({ password });
+        this.props.setPassword(password);
     }
 
     handleSubmit() {
-        const { email, password } = this.state;
+        const { email, password } = this.props;
 
         this.setState({
             loading: true,
-            error: ''
+            error: false
         });
 
-        firebase.auth()
-            .signInWithEmailAndPassword(email, password)
-            .then(this.onLoginSuccess)
-            .catch(() => {
-                firebase.auth()
-                    .createUserWithEmailAndPassword(email,password)
-                    .then(this.onLoginSuccess)
-                    .catch(this.onLoginError);
-            });
+        this.props
+            .setAuth(email, password)
+            .catch(this.onError);
     }
 
-    onLoginSuccess() {
-        this.setState({
-            email: '',
-            password: '',
-            loading: false,
-            error: ''
-        });
-    }
-
-    onLoginError() {
+    onError() {
         this.setState({
             loading: false,
-            error: 'Authentication Failed.'
+            error: true
         });
     }
 
@@ -78,17 +65,17 @@ class AuthLogin extends Component {
 
     render() {
         return (
-            <Card error={!!this.state.error}>
+            <Card error={this.state.error}>
                 <CardSection>
                     <Input label="Email"
                         placeholder="user@gmail.com"
-                        value={this.state.email}
+                        value={this.props.email}
                         onChangeText={this.handleChangeEmail}/>
                 </CardSection>
 
                 <CardSection>
                     <Input label="Password"
-                        value={this.state.password}
+                        value={this.props.password}
                         onChangeText={this.handleChangePassword}
                         secureTextEntry/>
                 </CardSection>
@@ -101,4 +88,30 @@ class AuthLogin extends Component {
     }
 }
 
-export default AuthLogin;
+AuthLogin.propTypes = {
+    email: PropTypes.string,
+    setEmail: PropTypes.func,
+    password: PropTypes.string,
+    setPassword: PropTypes.func,
+    setAuth: PropTypes.func.isRequired
+};
+
+AuthLogin.defaultProps = {
+    email: '',
+    setEmail: () => true,
+    password: '',
+    setPassword: () => true
+};
+
+const mapStateToProps = (state) => ({
+    email: AuthSelectors.getEmail(state),
+    password: AuthSelectors.getPassword(state)
+});
+
+const mapDispatchToProps = ({
+    setEmail: AuthActions.setEmail,
+    setPassword: AuthActions.setPassword,
+    setAuth: AuthActions.setAuth
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(AuthLogin);
