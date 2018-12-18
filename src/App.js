@@ -1,24 +1,17 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
 import { Provider } from 'react-redux';
+
 import createStore from './store';
-import Auth from './components/Auth';
+import Navigator from './navigator';
+
+import Navigation from './middlewares/navigation';
 
 const store = createStore();
 
 const App = () => (
 	<Provider store={store}>
-		<View style={styles.container}>
-			<Auth/>
-		</View>
+		<Navigator ref={Navigation.setNavigator(store)}/>
 	</Provider>
 );
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-		paddingTop: 50
-    }
-});
 
 export default App;
