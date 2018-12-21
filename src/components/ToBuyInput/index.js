@@ -1,37 +1,49 @@
 import React, { Component } from 'react';
-import { StyleSheet, KeyboardAvoidingView, TextInput } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import style from './../../style.json';
+
+import { Card, CardSection, Input } from './../lib';
+
+import * as ToBuysActions from './../../actions/toBuys';
 
 class ToBuyInput extends Component {
     constructor(props) {
         super(props);
-        this.state = { text: '' };
+        this.state = { description: '' };
+
+        this.handleSubmitEditing = this.handleSubmitEditing.bind(this);
+    }
+
+    handleSubmitEditing() {
+        this.props.createToBuy({
+            description: this.state.description
+        }).then(() => {
+            this.setState({ description: '' });
+        });
     }
 
     render() {
         return (
-            <KeyboardAvoidingView behavior="position">
-                <TextInput style={styles.input}
-                    onChangeText={(text) => this.setState({text})}
-                    onSubmitEditing={() => this.state.text}
-                    value={this.state.text}
-                    autoCorrect={false}
-                    autoFocus={true}
-                    selectionColor={style.color.text}/>
-            </KeyboardAvoidingView>
+            <Card>
+                <CardSection>
+                    <Input value={this.state.description}
+                        onChangeText={(description) => this.setState({description})}
+                        onSubmitEditing={this.handleSubmitEditing}
+                        autoFocus={true}
+                        blurOnSubmit={false}
+                        placeholder="What we have to buy?"/>
+                </CardSection>
+            </Card>
         );
     }
 }
 
-const styles = StyleSheet.create({
-    input: {
-        padding: 25,
-        fontSize: style.font.size.text,
-        color: style.color.background,
-        backgroundColor: style.color.text
-    }
+ToBuyInput.propTypes = {
+    createToBuy: PropTypes.func.isRequired
+};
+
+const mapDispatchToProps = ({
+    createToBuy: ToBuysActions.create
 });
 
-export default ToBuyInput;
+export default connect(null, mapDispatchToProps)(ToBuyInput);

@@ -2,6 +2,7 @@ import firebase from 'firebase';
 
 import * as AuthActions from './../../actions/auth';
 import * as UsersActions from './../../actions/users';
+import * as ToBuysActions from './../../actions/toBuys';
 
 const Firebase = (store) => {
 
@@ -14,7 +15,7 @@ const Firebase = (store) => {
         messagingSenderId: '1087163692542'
     });
 
-    let refCurrentUser;
+    let refCurrentUser, refCurrentUserToBuys;
 
     const onUserChange = (user) => {
         store.dispatch(UsersActions.add(user));
@@ -24,11 +25,17 @@ const Firebase = (store) => {
         onUserChange(userSnapshot.val());
     };
 
+    const handlerCurrentUserToBuys = (toBuysSnapshot) => {
+        store.dispatch(ToBuysActions.add(toBuysSnapshot.val()));
+    };
+
     const setCurrentUser = (id) => {
         store.dispatch(UsersActions.clear());
 
         refCurrentUser = firebase.database().ref(`users/${id}`);
         refCurrentUser.on('value', handlerCurrentUser);
+        refCurrentUserToBuys = firebase.database().ref('toBuys').orderByChild('userId').equalTo(id);
+        refCurrentUserToBuys.on('value', handlerCurrentUserToBuys);
 
         store.dispatch(AuthActions.setUser(id));
         store.dispatch(AuthActions.setEmail(''));
@@ -37,9 +44,14 @@ const Firebase = (store) => {
 
     const clearCurrentUser = () => {
         store.dispatch(UsersActions.clear());
+        store.dispatch(ToBuysActions.clear());
 
         if (refCurrentUser) {
             refCurrentUser.off('value', handlerCurrentUser);
+        }
+
+        if (refCurrentUserToBuys) {
+            refCurrentUserToBuys.off('value', handlerCurrentUserToBuys);
         }
 
         store.dispatch(AuthActions.setUser(null));
@@ -56,6 +68,15 @@ const Firebase = (store) => {
     return (next) => (action) => {
         const { type, payload } = action;
 
+        if (type === ToBuysActions.CREATE_TOBUY) {
+            const newToBuyRef = firebase.database().ref('toBuys').push();
+            return newToBuyRef.set({
+                ...payload,
+                id: newToBuyRef.key,
+                userId: firebase.auth().currentUser.uid
+            });
+        }
+
         if (type === AuthActions.SET_AUTH) {
             const { email, password } = payload;
 
@@ -65,16 +86,14 @@ const Firebase = (store) => {
                 .catch(
                     () => firebase.auth()
                         .createUserWithEmailAndPassword(email, password)
-                        .then(({ user }) => {
-                            const userToCreate = {
-                                id: user.uid,
-                                email: user.email
-                            };
-
-                            return firebase.database()
-                                .ref(`users/${userToCreate.id}`)
-                                .set(userToCreate);
-                        })
+                        .then(({ user }) =>
+                            firebase.database()
+                                .ref(`users/${user.uid}`)
+                                .set({
+                                    id: user.uid,
+                                    email: user.email
+                                })
+                        )
                 );
         }
 

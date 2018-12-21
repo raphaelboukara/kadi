@@ -2,9 +2,12 @@ import React from 'react';
 import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import * as Selectors from './../../selectors';
+
+import { Card } from './../lib';
+
+import * as ToBuysSelectors from './../../selectors/toBuys';
+
 import ToBuy from './../ToBuy';
-import ToBuySeparator from './../ToBuySeparator';
 
 const ToBuys = ({ data }) => {
     // eslint-disable-next-line react/prop-types
@@ -15,11 +18,14 @@ const ToBuys = ({ data }) => {
     const keyExtractor = ({ id }) => id;
 
     return (
-        <FlatList
-            data={data}
-            keyExtractor={keyExtractor}
-            renderItem={renderItem}
-            ItemSeparatorComponent={ToBuySeparator}/>
+        <Card>
+            <FlatList
+                data={data}
+                keyExtractor={keyExtractor}
+                renderItem={renderItem}
+                ref={ ( ref ) => this.scrollView = ref }
+                onContentSizeChange={() => this.scrollView.scrollToEnd()}/>
+        </Card>
     );
 };
 
@@ -34,7 +40,7 @@ ToBuys.defaultProps = {
 };
 
 const mapStateToProps = (state) => ({
-    data: Selectors.toBuyIds(state)
+    data: ToBuysSelectors.getIds(state)
         .map((id) => ({ id }))
 });
 

@@ -13,3 +13,4 @@ export const getIds = (state) =>
 
 export const findById = (state, id) =>
     getUsers(state)[id] || {};
+

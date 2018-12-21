@@ -7,17 +7,25 @@ const Input = ({
     value,
     placeholder,
     secureTextEntry,
-    onChangeText
+    onChangeText,
+    onSubmitEditing,
+    blurOnSubmit
 }) => (
     <View style={styles.container}>
-        <Text style={styles.label}>{label}</Text>
+        {
+            label
+                ? <Text style={styles.label}>{label}</Text>
+                : null
+        }
         <TextInput style={styles.input}
             placeholder={placeholder}
             value={value}
             onChangeText={onChangeText}
+            onSubmitEditing={onSubmitEditing}
             secureTextEntry={secureTextEntry}
             autoCorrect={false}
-            autoCapitalize="none"/>
+            autoCapitalize="none"
+            blurOnSubmit={blurOnSubmit}/>
     </View>
 );
 
@@ -26,12 +34,16 @@ Input.propTypes = {
     placeholder: PropTypes.string,
     value: PropTypes.string,
     onChangeText: PropTypes.func,
-    secureTextEntry: PropTypes.bool
+    onSubmitEditing: PropTypes.func,
+    secureTextEntry: PropTypes.bool,
+    blurOnSubmit: PropTypes.bool
 };
 
 Input.defaultProps = {
     onChangeText: () => true,
-    secureTextEntry: false
+    onSubmitEditing: () => true,
+    secureTextEntry: false,
+    blurOnSubmit: true
 };
 
 const styles = StyleSheet.create({

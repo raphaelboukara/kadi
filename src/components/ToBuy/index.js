@@ -2,32 +2,35 @@ import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import * as Selectors from './../../selectors';
-import style from './../../style.json';
 
-const ToBuy = ({ text }) => (
-    <Text style={styles.text}>
-        {text}
-    </Text>
+import { CardSection } from './../lib';
+
+import * as ToBuysSelectors from './../../selectors/toBuys';
+
+const ToBuy = ({ description }) => (
+    <CardSection>
+        <Text style={styles.text}>
+            {description}
+        </Text>
+    </CardSection>
 );
 
 ToBuy.propTypes = {
-    text: PropTypes.string.isRequired
+    description: PropTypes.string.isRequired
 };
 
 ToBuy.defaultProps = {
-    text: ''
+    description: ''
 };
 
 const mapStateToProps = (state, { id }) => ({
-    text: Selectors.toBuyById(state, id).text
+    description: ToBuysSelectors.findById(state, id).description
 });
 
 const styles = StyleSheet.create({
     text: {
-        padding: 25,
-        fontSize: style.font.size.text,
-        color: style.color.text
+        fontSize: 16,
+        padding: 10
     }
 });
 

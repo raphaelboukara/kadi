@@ -9,17 +9,15 @@ import Out from './../screens/OutScreen';
 import ToBuys from './../screens/ToBuysScreen';
 import Users from './../screens/UsersScreen';
 
-const In = createBottomTabNavigator({
-	Users,
-	ToBuys
-});
-
-const initialRouteName = 'Init';
+const In = createBottomTabNavigator(
+	{ Users, ToBuys },
+	{ initialRouteName: 'ToBuys' }
+);
 
 const Navigator = createAppContainer(
     createSwitchNavigator(
         { Init, Out, In },
-        { initialRouteName }
+        { initialRouteName: 'Init' }
     )
 );
 

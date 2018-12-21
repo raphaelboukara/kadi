@@ -1,15 +1,15 @@
-export const toBuyIds = (state = {}) => {
-    const toBuys = state.toBuys || {};
+const getToBuys = (state = {}) => {
+    const { toBuys } = state;
 
-    return Object.keys(toBuys);
-};
-
-export const toBuyById = (state = {}, id) => {
-    if (!id) {
+    if (!toBuys) {
         return {};
     }
 
-    const toBuys = state.toBuys || {};
-
-    return toBuys[id];
+    return toBuys;
 };
+
+export const getIds = (state) =>
+    Object.keys(getToBuys(state));
+
+export const findById = (state, id) =>
+    getToBuys(state)[id] || {};

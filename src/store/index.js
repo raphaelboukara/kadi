@@ -38,27 +38,19 @@ export default () => {
 //     toBuys: {
 //         1: {
 //             id: 1,
-//             description: 'fleur',
-//             created_at: '12/12/2012',
-//             createdByUserId: 1
+//             description: 'fleur'
 //         },
 //         2: {
 //             id: 2,
-//             description: 'sel',
-//             created_at: '12/12/2012',
-//             createdByUserId: 1
+//             description: 'sel'
 //         },
 //         3: {
 //             id: 3,
-//             description: 'habit keren',
-//             created_at: '12/12/2012',
-//             createdByUserId: 2
+//             description: 'habit keren'
 //         },
 //         4: {
 //             id: 4,
-//             description: 'sel',
-//             created_at: '12/12/2012',
-//             createdByUserId: 2
+//             description: 'sel'
 //         }
 //     }
 // }
