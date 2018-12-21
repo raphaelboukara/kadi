@@ -44,7 +44,7 @@ class AuthLogin extends Component {
             .catch(this.onError);
     }
 
-    onError() {
+    onError(error) {
         this.setState({
             loading: false,
             error: true

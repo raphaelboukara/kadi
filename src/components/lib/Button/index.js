@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 const Button = (props) => (
     <TouchableOpacity style={styles.button} {...props}>
@@ -9,7 +9,7 @@ const Button = (props) => (
     </TouchableOpacity>
 );
 
-const styles = {
+const styles = StyleSheet.create({
     button: {
         flex: 1,
         alignSelf: 'stretch',
@@ -28,6 +28,6 @@ const styles = {
         paddingTop: 10,
         paddingBottom: 10
     }
-};
+});
 
 export default Button;

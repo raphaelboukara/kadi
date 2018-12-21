@@ -1,6 +1,7 @@
 import firebase from 'firebase';
 
 import * as AuthActions from './../../actions/auth';
+import * as UsersActions from './../../actions/users';
 
 const Firebase = (store) => {
 
@@ -13,8 +14,43 @@ const Firebase = (store) => {
         messagingSenderId: '1087163692542'
     });
 
+    let refCurrentUser;
+
+    const onUserChange = (user) => {
+        store.dispatch(UsersActions.add(user));
+    };
+
+    const handlerCurrentUser = (userSnapshot) => {
+        onUserChange(userSnapshot.val());
+    };
+
+    const setCurrentUser = (id) => {
+        store.dispatch(UsersActions.clear());
+
+        refCurrentUser = firebase.database().ref(`users/${id}`);
+        refCurrentUser.on('value', handlerCurrentUser);
+
+        store.dispatch(AuthActions.setUser(id));
+        store.dispatch(AuthActions.setEmail(''));
+        store.dispatch(AuthActions.setPassword(''));
+    };
+
+    const clearCurrentUser = () => {
+        store.dispatch(UsersActions.clear());
+
+        if (refCurrentUser) {
+            refCurrentUser.off('value', handlerCurrentUser);
+        }
+
+        store.dispatch(AuthActions.setUser(null));
+        store.dispatch(AuthActions.setEmail(''));
+        store.dispatch(AuthActions.setPassword(''));
+    };
+
     firebase.auth().onAuthStateChanged((user) => {
-        store.dispatch(AuthActions.setUser(user));
+        user
+            ? setCurrentUser(user.uid)
+            : clearCurrentUser();
     });
 
     return (next) => (action) => {
@@ -26,14 +62,20 @@ const Firebase = (store) => {
             return firebase
                 .auth()
                 .signInWithEmailAndPassword(email, password)
-                .catch(() => firebase
-                    .auth()
-                    .createUserWithEmailAndPassword(email,password))
-                .then((user) => {
-                    next(AuthActions.setUser(user));
-                    next(AuthActions.setEmail(''));
-                    next(AuthActions.setPassword(''));
-                });
+                .catch(
+                    () => firebase.auth()
+                        .createUserWithEmailAndPassword(email, password)
+                        .then(({ user }) => {
+                            const userToCreate = {
+                                id: user.uid,
+                                email: user.email
+                            };
+
+                            return firebase.database()
+                                .ref(`users/${userToCreate.id}`)
+                                .set(userToCreate);
+                        })
+                );
         }
 
         if (type === AuthActions.UNSET_AUTH) {
