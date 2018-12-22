@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 
 const Screen = ({ children }) => (
     <View style={styles.container}>
@@ -18,7 +18,7 @@ Screen.propTypes = {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 10,
+        paddingTop: Platform.OS === 'ios' ? 50 : 10,
         paddingHorizontal: 5
     }
 });
