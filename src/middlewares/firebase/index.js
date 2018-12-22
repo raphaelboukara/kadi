@@ -26,7 +26,7 @@ const Firebase = (store) => {
     };
 
     const handlerCurrentUserToBuys = (toBuysSnapshot) => {
-        store.dispatch(ToBuysActions.add(toBuysSnapshot.val()));
+        store.dispatch(ToBuysActions.set(toBuysSnapshot.val()));
     };
 
     const setCurrentUser = (id) => {
@@ -75,6 +75,14 @@ const Firebase = (store) => {
                 id: newToBuyRef.key,
                 userId: firebase.auth().currentUser.uid
             });
+        }
+
+        if (type === ToBuysActions.REMOVE_TOBUY) {
+            const { id } = payload;
+
+            return firebase.database()
+                .ref(`toBuys/${id}`)
+                .remove();
         }
 
         if (type === AuthActions.SET_AUTH) {
