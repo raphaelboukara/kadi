@@ -6,16 +6,20 @@ import {
 
 import Screen from './../Screen';
 
-import ToBuys from './../../components/ToBuys';
-import ToBuyInput from './../../components/ToBuyInput';
+import ToPays from './../../components/ToPays';
+import ToPaysTotal from './../../components/ToPaysTotal';
+import ToPayInput from './../../components/ToPayInput';
 
-const ToBuysScreen = () => (
+const ToPaysScreen = () => (
     <Screen>
         <View style={styles.list}>
-            <ToBuys/>
+            <ToPays/>
+        </View>
+        <View style={styles.total}>
+            <ToPaysTotal/>
         </View>
         <View style={styles.input}>
-            <ToBuyInput/>
+            <ToPayInput/>
         </View>
     </Screen>
 );
@@ -25,9 +29,12 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingBottom: 5
     },
+    total: {
+        paddingBottom: 5
+    },
     input: {
         paddingBottom: 10
     }
 });
 
-export default ToBuysScreen;
+export default ToPaysScreen;

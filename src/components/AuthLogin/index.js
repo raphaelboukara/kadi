@@ -70,7 +70,8 @@ class AuthLogin extends Component {
                     <Input label="Email"
                         placeholder="user@gmail.com"
                         value={this.props.email}
-                        onChangeText={this.handleChangeEmail}/>
+                        onChangeText={this.handleChangeEmail}
+                        keyboardType="email-address"/>
                 </CardSection>
 
                 <CardSection>
