@@ -36,7 +36,7 @@ class ToPayInput extends Component {
                     <Input label="Description"
                         value={this.state.description}
                         onChangeText={(description) => this.setState({description})}
-                        placeholder="What we have to pay?"/>
+                        placeholder="What we just paid?"/>
                 </CardSection>
 
                 <CardSection>

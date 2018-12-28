@@ -94,11 +94,9 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap'
     },
     description: {
-        fontSize: 16,
         padding: 10
     },
     amount: {
-        fontSize: 16,
         padding: 10,
         color: 'grey'
     },

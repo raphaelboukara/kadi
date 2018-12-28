@@ -86,7 +86,6 @@ ToBuy.defaultProps = {
 
 const styles = StyleSheet.create({
     text: {
-        fontSize: 16,
         padding: 10
     },
     absoluteCell: {

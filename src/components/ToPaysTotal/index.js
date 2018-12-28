@@ -33,13 +33,11 @@ ToPaysTotal.defaultProps = {
 
 const styles = StyleSheet.create({
     label: {
-        fontSize: 18,
         paddingLeft: 10,
         flex: 1,
         alignSelf: 'center'
     },
     amount: {
-        fontSize: 16,
         padding: 10,
         color: 'red'
     }

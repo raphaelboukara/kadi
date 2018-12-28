@@ -1,7 +1,7 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
-import { FlatList } from 'react-native';
+import { SectionList, Text } from 'react-native';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
 import { Card } from './../lib';
 
@@ -9,39 +9,33 @@ import * as ToPaysSelectors from './../../selectors/toPays';
 
 import ToPay from './../ToPay';
 
-const ToPays = ({ data }) => {
-    // eslint-disable-next-line react/prop-types
+const ToPays = ({ sections }) => {
     const renderItem = ({ item }) => (
-        <ToPay id={item.id}/>
+        <ToPay id={item}/>
     );
 
-    const keyExtractor = ({ id }) => id;
+    const renderSectionHeader = ({ section: { title } }) => (
+        <Text style={{
+            padding: 5,
+            backgroundColor: 'lightgrey'
+        }}>{title}</Text>
+    );
+
+    const keyExtractor = (id, index) => `${index}-${id}`;
 
     return (
         <Card>
-            <FlatList
-                data={data}
-                keyExtractor={keyExtractor}
+            <SectionList
                 renderItem={renderItem}
-                ref={ ( ref ) => this.scrollView = ref }
-                onContentSizeChange={() => this.scrollView.scrollToEnd()}/>
+                renderSectionHeader={renderSectionHeader}
+                sections={sections}
+                keyExtractor={keyExtractor}/>
         </Card>
     );
 };
 
-ToPays.propTypes = {
-    data: PropTypes.arrayOf(PropTypes.shape({
-        id: PropTypes.string
-    }))
-};
-
-ToPays.defaultProps = {
-    data: []
-};
-
 const mapStateToProps = (state) => ({
-    data: ToPaysSelectors.getIds(state)
-        .map((id) => ({ id }))
+    sections: ToPaysSelectors.formatForSectionList(state)
 });
 
 export default connect(mapStateToProps)(ToPays);
