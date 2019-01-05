@@ -7,26 +7,30 @@ import { CardSection } from './../lib';
 
 import * as UsersSelectors from './../../selectors/users';
 
-const User = ({ email }) => (
+const User = ({ email, color }) => (
     <CardSection>
-        <Text style={styles.text}>
+        <Text style={styles.text(color)}>
             {email}
         </Text>
     </CardSection>
 );
 
 User.propTypes = {
-    email: PropTypes.string.isRequired
+    email: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired
 };
 
-const mapStateToProps = (state, { id }) => ({
-    email: UsersSelectors.findById(state, id).email
-});
+const mapStateToProps = (state, { id }) => {
+    const { email, color } = UsersSelectors.findById(state, id);
+
+    return { email, color };
+};
 
 const styles = StyleSheet.create({
-    text: {
-        padding: 10
-    }
+    text: (color) => ({
+        padding: 10,
+        color
+    })
 });
 
 export default connect(mapStateToProps)(User);

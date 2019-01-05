@@ -12,7 +12,7 @@ import Users from './../screens/UsersScreen';
 
 const In = createBottomTabNavigator(
 	{ Users, ToBuys, ToPays },
-	{ initialRouteName: 'ToPays' }
+	{ initialRouteName: 'Users' }
 );
 
 const Navigator = createAppContainer(

@@ -1,3 +1,5 @@
+import * as UsersSelectors from './../users';
+
 const getToBuys = (state = {}) => {
     const { toBuys } = state;
 
@@ -11,5 +13,11 @@ const getToBuys = (state = {}) => {
 export const getIds = (state) =>
     Object.keys(getToBuys(state));
 
-export const findById = (state, id) =>
-    getToBuys(state)[id] || {};
+export const findById = (state, id) => {
+    const toBuy = getToBuys(state)[id] || {};
+
+    return {
+        ...toBuy,
+        color: UsersSelectors.findById(state, toBuy.userId).color
+    };
+};

@@ -1,3 +1,5 @@
+import * as UsersSelectors from './../users';
+
 const getToPays = (state = {}) => {
     const { toPays } = state;
 
@@ -11,8 +13,22 @@ const getToPays = (state = {}) => {
 export const getIds = (state) =>
     Object.keys(getToPays(state));
 
-export const findById = (state, id) =>
-    getToPays(state)[id] || {};
+export const findById = (state, id) => {
+    const toPay = getToPays(state)[id] || {};
+
+    return {
+        ...toPay,
+        color: UsersSelectors.findById(state, toPay.userId).color
+    };
+};
+
+export const totalAmountByUserId = (state, userId) =>
+    Object.values(getToPays(state))
+        .filter((toPay) => toPay.userId === userId)
+        .reduce(
+            (total, { amount }) => total + (parseFloat(amount) || 0),
+            0
+        );
 
 export const totalAmount = (state) =>
     Object.values(getToPays(state))
@@ -20,14 +36,6 @@ export const totalAmount = (state) =>
             (total, { amount }) => total + (parseFloat(amount) || 0),
             0
         );
-
-// const getDate = (n) =>
-//     new Intl.DateTimeFormat('fr-FR', {
-//         weekday: 'long',
-//         year: 'numeric',
-//         month: 'long',
-//         day: 'numeric'
-//     }).format(n);
 
 const getDate = (n) => {
     const d = new Date(n);

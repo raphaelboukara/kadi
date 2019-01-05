@@ -4,10 +4,16 @@ export const add = (user) => ({
     payload: user
 });
 
+export const FETCH_USER = 'fetch_user';
+export const fetch = ({ email }) => ({
+    type: FETCH_USER,
+    payload: { email }
+});
+
 export const UPDATE_USER = 'update_user';
-export const update = (id, key, value) => ({
-    type: ADD_USER,
-    payload: { id, key, value }
+export const update = (user) => ({
+    type: UPDATE_USER,
+    payload: user
 });
 
 export const CLEAR_USERS = 'clear_users';

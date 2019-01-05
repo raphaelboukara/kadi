@@ -66,7 +66,7 @@ class ToBuy extends Component {
             <CardSection>
                 <Animated.View style={this.state.position.getLayout()}
                     {...this.panResponder.panHandlers}>
-                    <Text style={styles.text}>
+                    <Text style={styles.text(this.props.color)}>
                         {this.props.description}
                     </Text>
                 </Animated.View>
@@ -77,6 +77,7 @@ class ToBuy extends Component {
 
 ToBuy.propTypes = {
     description: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired,
     remove: PropTypes.func.isRequired
 };
 
@@ -85,9 +86,10 @@ ToBuy.defaultProps = {
 };
 
 const styles = StyleSheet.create({
-    text: {
-        padding: 10
-    },
+    text: (color) => ({
+        padding: 10,
+        color
+    }),
     absoluteCell: {
         position: 'absolute',
         top: 0,
@@ -97,9 +99,11 @@ const styles = StyleSheet.create({
     }
 });
 
-const mapStateToProps = (state, { id }) => ({
-    description: ToBuysSelectors.findById(state, id).description
-});
+const mapStateToProps = (state, { id }) => {
+    const { description, color } = ToBuysSelectors.findById(state, id);
+
+    return { description, color };
+};
 
 const mapDispatchToProps = (dispatch, { id }) => ({
     remove: () => dispatch(ToBuysActions.remove(id))

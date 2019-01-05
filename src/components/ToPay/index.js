@@ -68,10 +68,10 @@ class ToPay extends Component {
                 <Animated.View style={this.state.position.getLayout()}
                     {...this.panResponder.panHandlers}>
                     <View style={styles.container}>
-                        <Text style={styles.description}>
+                        <Text style={styles.description(this.props.color)}>
                             {this.props.description}
                         </Text>
-                        <Text style={styles.amount}>
+                        <Text style={styles.amount(this.props.color)}>
                             ₪ {this.props.amount}
                         </Text>
                     </View>
@@ -84,6 +84,7 @@ class ToPay extends Component {
 ToPay.propTypes = {
     description: PropTypes.string.isRequired,
     amount: PropTypes.string.isRequired,
+    color: PropTypes.string.isRequired,
     remove: PropTypes.func.isRequired
 };
 
@@ -93,13 +94,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap'
     },
-    description: {
-        padding: 10
-    },
-    amount: {
+    description: (color) => ({
         padding: 10,
-        color: 'grey'
-    },
+        color
+    }),
+    amount: (color) => ({
+        padding: 10,
+        color
+    }),
     absoluteCell: {
         position: 'absolute',
         top: 0,
@@ -110,9 +112,9 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state, { id }) => {
-    const { description, amount } = ToPaysSelectors.findById(state, id);
+    const { description, amount, color } = ToPaysSelectors.findById(state, id);
 
-    return { description, amount };
+    return { description, amount, color };
 };
 
 const mapDispatchToProps = (dispatch, { id }) => ({

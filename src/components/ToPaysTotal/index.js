@@ -8,14 +8,22 @@ import PropTypes from 'prop-types';
 
 import { Card, CardSection } from './../lib';
 
+import ToPaysTotalForUser from './../ToPaysTotalForUser';
+
+import * as UsersSelectors from './../../selectors/users';
 import * as ToPaysSelectors from './../../selectors/toPays';
 
-const ToPaysTotal = ({ amount }) => (
+const ToPaysTotal = ({ amount, userIds }) => (
     <Card>
         <CardSection>
             <Text style={styles.label}>
                 Total
             </Text>
+            {
+                userIds.map((userId) => (
+                    <ToPaysTotalForUser key={userId} id={userId}/>
+                ))
+            }
             <Text style={styles.amount}>
                 ₪ {amount}
             </Text>
@@ -24,11 +32,13 @@ const ToPaysTotal = ({ amount }) => (
 );
 
 ToPaysTotal.propTypes = {
-    amount: PropTypes.number
+    amount: PropTypes.number,
+    userIds: PropTypes.arrayOf(PropTypes.string)
 };
 
 ToPaysTotal.defaultProps = {
-    amount: 0
+    amount: 0,
+    userIds: []
 };
 
 const styles = StyleSheet.create({
@@ -44,6 +54,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
+    userIds: UsersSelectors.getIds(state),
     amount: ToPaysSelectors.totalAmount(state)
 });
 

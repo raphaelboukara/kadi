@@ -7,6 +7,8 @@ import * as UsersActions from './../../actions/users';
 import * as ToBuysActions from './../../actions/toBuys';
 import * as ToPaysActions from './../../actions/toPays';
 
+import * as UsersSelectors from './../../selectors/users';
+
 const Firebase = (store) => {
 
     firebase.initializeApp({
@@ -19,11 +21,27 @@ const Firebase = (store) => {
     });
 
     let refCurrentUser,
+        refPartnerUserId,
+        refPartnerUser,
         refCurrentUserToBuys,
-        refCurrentUserToPays;
+        refCurrentUserToPays,
+        refPartnerUserToBuys,
+        refPartnerUserToPays;
 
     const handlerCurrentUser = (userSnapshot) => {
         store.dispatch(UsersActions.add(userSnapshot.val()));
+    };
+
+    const handlerPartnerUser = (userSnapshot) => {
+        store.dispatch(UsersActions.add(userSnapshot.val()));
+    };
+
+    const handlerPartnerUserToBuys = (toBuysSnapshot) => {
+        store.dispatch(ToBuysActions.set(toBuysSnapshot.val()));
+    };
+
+    const handlerPartnerUserToPays = (toPaysSnapshot) => {
+        store.dispatch(ToPaysActions.set(toPaysSnapshot.val()));
     };
 
     const handlerCurrentUserToBuys = (toBuysSnapshot) => {
@@ -34,11 +52,47 @@ const Firebase = (store) => {
         store.dispatch(ToPaysActions.set(toPaysSnapshot.val()));
     };
 
+    const handlerPartnerUserId = (partnerUserIdSnapshot) => {
+        const partnerUserId = partnerUserIdSnapshot.val();
+
+        if (refPartnerUser) {
+            refPartnerUser.off('value', handlerPartnerUser);
+        }
+
+        if (refPartnerUserToBuys) {
+            refPartnerUserToBuys.off('value', handlerPartnerUserToBuys);
+        }
+
+        if (refPartnerUserToPays) {
+            refPartnerUserToPays.off('value', handlerPartnerUserToPays);
+        }
+
+        if (partnerUserId) {
+            refPartnerUser = firebase.database().ref(`users/${partnerUserId}`);
+            refPartnerUser.on('value', handlerPartnerUser);
+
+            refPartnerUserToBuys = firebase.database()
+                .ref('toBuys')
+                .orderByChild('userId')
+                .equalTo(partnerUserId);
+            refPartnerUserToBuys.on('value', handlerPartnerUserToBuys);
+
+            refPartnerUserToPays = firebase.database()
+                .ref('toPays')
+                .orderByChild('userId')
+                .equalTo(partnerUserId);
+            refPartnerUserToPays.on('value', handlerPartnerUserToPays);
+        }
+    };
+
     const setCurrentUser = (id) => {
         store.dispatch(UsersActions.clear());
 
         refCurrentUser = firebase.database().ref(`users/${id}`);
         refCurrentUser.on('value', handlerCurrentUser);
+
+        refPartnerUserId = firebase.database().ref(`users/${id}/partnerUserId`);
+        refPartnerUserId.on('value', handlerPartnerUserId);
 
         refCurrentUserToBuys = firebase.database()
             .ref('toBuys')
@@ -60,9 +114,26 @@ const Firebase = (store) => {
     const clearCurrentUser = () => {
         store.dispatch(UsersActions.clear());
         store.dispatch(ToBuysActions.clear());
+        store.dispatch(ToPaysActions.clear());
 
         if (refCurrentUser) {
             refCurrentUser.off('value', handlerCurrentUser);
+        }
+
+        if (refPartnerUserId) {
+            refPartnerUserId.off('value', handlerPartnerUserId);
+        }
+
+        if (refPartnerUser) {
+            refPartnerUser.off('value', handlerPartnerUser);
+        }
+
+        if (refPartnerUserToBuys) {
+            refPartnerUserToBuys.off('value', handlerPartnerUserToBuys);
+        }
+
+        if (refPartnerUserToPays) {
+            refPartnerUserToPays.off('value', handlerPartnerUserToPays);
         }
 
         if (refCurrentUserToBuys) {
@@ -86,6 +157,7 @@ const Firebase = (store) => {
 
     return (next) => (action) => {
         const { type, payload } = action;
+        const state = store.getState();
 
         if (type === ToPaysActions.CREATE_TOPAY) {
             const newToPayRef = firebase.database().ref('toPays').push();
@@ -102,7 +174,8 @@ const Firebase = (store) => {
 
             return firebase.database()
                 .ref(`toPays/${id}`)
-                .remove();
+                .remove()
+                .then(() => next(action));
         }
 
         if (type === ToBuysActions.CREATE_TOBUY) {
@@ -119,7 +192,8 @@ const Firebase = (store) => {
 
             return firebase.database()
                 .ref(`toBuys/${id}`)
-                .remove();
+                .remove()
+                .then(() => next(action));
         }
 
         if (type === AuthActions.SET_AUTH) {
@@ -145,6 +219,45 @@ const Firebase = (store) => {
         if (type === AuthActions.UNSET_AUTH) {
             firebase.auth().signOut();
             return;
+        }
+
+        if (type === UsersActions.FETCH_USER) {
+            const { email } = payload;
+
+            return firebase.database()
+                .ref()
+                .child('users')
+                .orderByChild('email')
+                .equalTo(email)
+                .once('value')
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        return {
+                            user: Object.values(snapshot.val())[0],
+                            currentUser: UsersSelectors.findById(
+                                state,
+                                firebase.auth().currentUser.uid
+                            )
+                        };
+                    } else {
+                        throw 'USER_NOT_FOUND_ERROR';
+                    }
+                });
+        }
+
+        if (type === UsersActions.UPDATE_USER) {
+            const user = payload;
+
+            return firebase.database()
+                .ref(`users/${user.id}`)
+                .set(payload)
+                .then(() => ({
+                    user,
+                    currentUser: UsersSelectors.findById(
+                        state,
+                        firebase.auth().currentUser.uid
+                    )
+                }));
         }
 
         return next(action);
